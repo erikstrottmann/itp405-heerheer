@@ -17,7 +17,7 @@ module.exports = function login(inputs) {
 
   // Look up the user
   User.attemptLogin({
-    email: inputs.email,
+    username: inputs.username,
     password: inputs.password
   }, function (err, user) {
     if (err) return res.negotiate(err);

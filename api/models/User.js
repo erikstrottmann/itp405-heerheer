@@ -8,8 +8,8 @@
 module.exports = {
 
   attributes: {
-    email: {
-      type: 'email',
+    username: {
+      type: 'string',
       required: true
     },
     password: {
@@ -24,8 +24,7 @@ module.exports = {
    * but encrypt the password first.
    *
    * @param  {Object}   inputs
-   *                     • name     {String}
-   *                     • email    {String}
+   *                     • username {String}
    *                     • password {String}
    * @param  {Function} cb
    */
@@ -33,8 +32,7 @@ module.exports = {
   signup: function (inputs, cb) {
     // Create a user
     User.create({
-      name: inputs.name,
-      email: inputs.email,
+      username: inputs.username,
       // TODO: But encrypt the password first
       password: inputs.password
     })
@@ -56,7 +54,7 @@ module.exports = {
   attemptLogin: function (inputs, cb) {
     // Create a user
     User.findOne({
-      email: inputs.email,
+      username: inputs.username,
       // TODO: But encrypt the password first
       password: inputs.password
     })

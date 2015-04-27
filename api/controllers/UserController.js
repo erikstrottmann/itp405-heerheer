@@ -14,7 +14,7 @@ module.exports = {
 
     // See `api/responses/login.js`
     return res.login({
-      email: req.param('email'),
+      username: req.param('username'),
       password: req.param('password'),
       successRedirect: '/',
       invalidRedirect: '/login'
@@ -50,8 +50,7 @@ module.exports = {
 
     // Attempt to signup a user using the provided parameters
     User.signup({
-      name: req.param('name'),
-      email: req.param('email'),
+      username: req.param('username'),
       password: req.param('password')
     }, function (err, user) {
       // res.negotiate() will determine if this is a validation error
