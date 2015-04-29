@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create an event</title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/importer.css">
+    <!--STYLES END-->
+  </head>
+
+  <body onload="getLocation()">
+
+    <h1>Create an event</h1>
+
+    <div id="map-canvas" style="height:200px; width:200px;">(loading map)</div>
+    <div id="lat-lng-text"></div>
+    <div id="radius-text"></div>
+    <div id="error-text"></div>
+
+    <form action="/events" method="post">
+      <div class="form-group">
+        <label for="event-name">event name</label>
+        <input id="event-name" name="event-name" type="text">
+      </div>
+
+      <div class="form-group">
+        <label for="latitude">latitude</label>
+        <input id="latitude" name="latitude" type="number" readonly="readonly">
+      </div>
+
+      <div class="form-group">
+        <label for="longitude">longitude</label>
+        <input id="longitude" name="longitude" type="number" readonly="readonly">
+      </div>
+
+      <div class="form-group">
+        <label for="radius">radius</label>
+        <input id="radius" name="radius" type="number" readonly="readonly">
+      </div>
+
+      <div class="form-group">
+        <label for="start">start</label>
+        <input id="start" name="start" type="datetime-local">
+      </div>
+
+      <div class="form-group">
+        <label for="end">end</label>
+        <input id="end" name="end" type="datetime-local">
+      </div>
+
+      <input type="submit" value="create event" class="btn btn-default">
+    </form>
+
+    <script type="text/javascript"
+      src="//maps.googleapis.com/maps/api/js"></script>
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          var errorText = document.getElementById("error-text");
+          errorText.innerHTML = "Geolocation is not supported by this browser.";
+        }
+      }
+
+      function showPosition(position) {
+        var currentLat = position.coords.latitude;
+        var currentLng = position.coords.longitude;
+        var currentLoc = new google.maps.LatLng(currentLat, currentLng);
+        updateLatLng(currentLat, currentLng);
+
+        var defaultRadius = 40;
+        updateRadius(defaultRadius);
+
+        var mapCanvas = document.getElementById("map-canvas");
+
+        var mapOptions = {
+          zoom: 17,
+          center: currentLoc,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions);
+
+        var circleOptions = {
+          strokeColor: '#22DD22',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#22DD22',
+          fillOpacity: 0.35,
+          map: map,
+          center: currentLoc,
+          radius: defaultRadius,
+          editable: true,
+          draggable: true,
+        };
+        var circle = new google.maps.Circle(circleOptions);
+
+        google.maps.event.addListener(circle, 'center_changed', function() {
+          var center = circle.getCenter();
+          updateLatLng(center.lat(), center.lng());
+        });
+
+        google.maps.event.addListener(circle, 'radius_changed', function() {
+          updateRadius(circle.getRadius());
+        });
+      }
+
+      function updateLatLng(lat, lng) {
+        var latField = document.getElementById("latitude");
+        var lngField = document.getElementById("longitude");
+
+        latField.value = lat;
+        lngField.value = lng;
+      }
+
+      function updateRadius(radius) {
+        var radiusField = document.getElementById("radius");
+        radiusField.value = radius;
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            locText.innerHTML = "User denied the request for Geolocation."
+            break;
+          case error.POSITION_UNAVAILABLE:
+            locText.innerHTML = "Location information is unavailable."
+            break;
+          case error.TIMEOUT:
+            locText.innerHTML = "The request to get user location timed out."
+            break;
+          case error.UNKNOWN_ERROR:
+            locText.innerHTML = "An unknown error occurred."
+            break;
+        }
+      }
+    </script>
+
+  </body>
+</html>
