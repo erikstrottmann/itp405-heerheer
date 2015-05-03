@@ -25,7 +25,7 @@ module.exports = {
     Event.create(input).exec(function (err, event) {
       if (err) {
         req.flash("error", "couldn't create the event");
-        res.negotiate(err);
+        return res.negotiate(err);
       }
 
       if (req.wantsJSON()) {
