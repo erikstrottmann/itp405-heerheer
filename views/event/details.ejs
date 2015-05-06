@@ -28,7 +28,7 @@
 
     <!-- event details -->
       <!-- google map -->
-    <div id="map-canvas" style="height:200px; width:200px;">(loading map)</div><br>
+    <div id="map-canvas" style="height:400px; width:400px;">(loading map)</div><br>
 
     <p><strong>start</strong> <%= event.start %></p>
     <p><strong>end</strong> <%= event.end %></p>
@@ -62,7 +62,7 @@
         }
       }
 
-      function showMap(color) {
+      function showMap(color, currentLoc) {
         var eventLat = <%= event.latitude %>;
         var eventLng = <%= event.longitude %>;
         var eventLoc = new google.maps.LatLng(eventLat, eventLng);
@@ -70,15 +70,14 @@
         var eventRadius = <%= event.radius %>;
 
         var mapCanvas = document.getElementById("map-canvas");
-
         var mapOptions = {
-          zoom: 17,
+          zoom: 18,
           center: eventLoc,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
         }
         var map = new google.maps.Map(mapCanvas, mapOptions);
 
-        var circleOptions = {
+        var circle = new google.maps.Circle({
           strokeColor: color,
           strokeOpacity: 0.6,
           strokeWeight: 2,
@@ -87,8 +86,15 @@
           map: map,
           center: eventLoc,
           radius: eventRadius,
-        };
-        var circle = new google.maps.Circle(circleOptions);
+        });
+
+        if (currentLoc) {
+          var marker = new google.maps.Marker({
+            position: currentLoc,
+            map: map,
+            title: 'you!',
+          });
+        }
 
         google.maps.event.addListener(circle, 'center_changed', function() {
           var center = circle.getCenter();
@@ -116,9 +122,9 @@
         var mapCanvas = document.getElementById("map-canvas");
 
         if (eventCircle.getBounds().contains(eventLoc)) {
-          showMap('#22DD22');
+          showMap('#22DD22', currentLoc);
         } else {
-          showMap('#DD22DD');
+          showMap('#DD22DD', currentLoc);
         }
       }
 
@@ -138,7 +144,7 @@
         //     break;
         // }
 
-        showMap('#222222');
+        showMap('#222222', null);
       }
     </script>
 

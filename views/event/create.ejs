@@ -93,7 +93,7 @@
         }
         var map = new google.maps.Map(mapCanvas, mapOptions);
 
-        var circleOptions = {
+        var circle = new google.maps.Circle({
           strokeColor: '#222222',
           strokeOpacity: 0.6,
           strokeWeight: 2,
@@ -104,8 +104,13 @@
           radius: defaultRadius,
           editable: true,
           draggable: true,
-        };
-        var circle = new google.maps.Circle(circleOptions);
+        });
+
+        var marker = new google.maps.Marker({
+          position: currentLoc,
+          map: map,
+          title: 'Hello World!'
+        });
 
         updateShapeColor(currentLoc, circle);
 
