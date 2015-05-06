@@ -33,6 +33,20 @@
     <p><strong>start</strong> <%= event.start %></p>
     <p><strong>end</strong> <%= event.end %></p>
 
+    <h2>check in</h2>
+
+    <div>
+      <form action="/events/<%= event.id %>/attendees" method="post">
+        <div class="form-group">
+          <p id="rightplace-righttime" hidden>you're at the right place at the right time.</p>
+          <p id="wrongplace-righttime" hidden>the time is right, but you feel... distant</p>
+          <p id="rightplace-wrongtime" hidden>you've come to the right place, but... now's not a good time.</p>
+          <p id="wrongplace-wrongtime" hidden>not here! not now!</p>
+          <input id="checkin-button" type="submit" value="check in" class="btn btn-default" disabled>
+        </div>
+      </form>
+    </div>
+
     <h2>attendees</h2>
 
     <% if (event.attendees.length < 1) { %>
@@ -123,8 +137,10 @@
 
         if (eventCircle.getBounds().contains(eventLoc)) {
           showMap('#22DD22', currentLoc);
+          showCheckIn(true);
         } else {
           showMap('#DD22DD', currentLoc);
+          showCheckIn(false);
         }
       }
 
@@ -145,6 +161,37 @@
         // }
 
         showMap('#222222', null);
+      }
+
+      function showCheckIn(rightPlace) {
+        var now = new Date();
+        var eventStart = new Date("<%= event.start %>");
+        var eventEnd = new Date("<%= event.end %>");
+
+        var rightTime = (eventStart < now && now < eventEnd);
+
+        var rprt = document.getElementById("rightplace-righttime");
+        var wprt = document.getElementById("wrongplace-righttime");
+        var rpwt = document.getElementById("rightplace-wrongtime");
+        var wpwt = document.getElementById("wrongplace-wrongtime");
+        var but = document.getElementById("checkin-button");
+
+        rprt.setAttribute('hidden', true);
+        wprt.setAttribute('hidden', true);
+        rpwt.setAttribute('hidden', true);
+        wpwt.setAttribute('hidden', true);
+        but.enabled = false;
+
+        if (rightPlace && rightTime) {
+          rprt.removeAttribute('hidden');
+          but.enabled = true;
+        } else if (rightTime) {
+          wprt.removeAttribute('hidden');
+        } else if (rightPlace) {
+          rpwt.removeAttribute('hidden');
+        } else {
+          wpwt.removeAttribute('hidden');
+        }
       }
     </script>
 

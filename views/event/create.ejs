@@ -112,8 +112,6 @@
           title: 'Hello World!'
         });
 
-        updateShapeColor(currentLoc, circle);
-
         google.maps.event.addListener(circle, 'center_changed', function() {
           var center = circle.getCenter();
           updateLatLng(center.lat(), center.lng());
@@ -125,20 +123,6 @@
           updateRadius(circle.getRadius());
           updateShapeColor(currentLoc, circle);
         });
-      }
-
-      function updateShapeColor(latLng, shape) {
-        if (shape.getBounds().contains(latLng)) {
-          shape.setOptions({
-            strokeColor: '#22DD22',
-            fillColor: '#22DD22',
-          });
-        } else {
-          shape.setOptions({
-            strokeColor: '#DD2222',
-            fillColor: '#DD2222',
-          });
-        }
       }
 
       function updateLatLng(lat, lng) {
