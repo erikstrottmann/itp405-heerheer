@@ -10,11 +10,23 @@ module.exports = {
   attributes: {
     username: {
       type: 'string',
-      required: true
+      required: true,
+      unique: true,
     },
     password: {
       type: 'string',
-      required: true
+      required: true,
+    },
+
+    // events
+    eventsCreated: {
+      collection: 'event',
+      via: 'creator',
+    },
+    eventsAttended: {
+      collection: 'event',
+      via: 'attendees',
+      dominant: true,
     }
   },
 

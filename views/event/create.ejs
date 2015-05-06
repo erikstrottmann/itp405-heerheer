@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Create an event</title>
+    <title>create an event</title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,10 +13,13 @@
   </head>
 
   <body onload="getLocation()">
+  <div class="container">
+  <div class="row">
+  <div class="col-md-8 col-md-offset-2">
 
-    <h1>Create an event</h1>
+    <h1>create an event</h1>
 
-    <div id="map-canvas" style="height:200px; width:200px;">(loading map)</div>
+    <div id="map-canvas" style="height:400px; width:500px;">(loading map)</div><br>
     <div id="lat-lng-text"></div>
     <div id="radius-text"></div>
     <div id="error-text"></div>
@@ -27,19 +30,19 @@
         <input id="event-name" name="event-name" type="text">
       </div>
 
-      <div class="form-group">
+      <div class="form-group" hidden>
         <label for="latitude">latitude</label>
-        <input id="latitude" name="latitude" type="number" readonly="readonly">
+        <input id="latitude" name="latitude" type="number" readonly>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" hidden>
         <label for="longitude">longitude</label>
-        <input id="longitude" name="longitude" type="number" readonly="readonly">
+        <input id="longitude" name="longitude" type="number" readonly>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" hidden>
         <label for="radius">radius</label>
-        <input id="radius" name="radius" type="number" readonly="readonly">
+        <input id="radius" name="radius" type="number" readonly>
       </div>
 
       <div class="form-group">
@@ -54,20 +57,25 @@
 
       <input type="submit" value="create event" class="btn btn-default">
     </form>
+  </div>
+  </div>
+  </div>
+
+    <!-- Google Maps scripts -->
 
     <script type="text/javascript"
       src="//maps.googleapis.com/maps/api/js"></script>
     <script>
       function getLocation() {
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition, showError);
+          navigator.geolocation.getCurrentPosition(showMap, showError);
         } else {
           var errorText = document.getElementById("error-text");
           errorText.innerHTML = "Geolocation is not supported by this browser.";
         }
       }
 
-      function showPosition(position) {
+      function showMap(position) {
         var currentLat = position.coords.latitude;
         var currentLng = position.coords.longitude;
         var currentLoc = new google.maps.LatLng(currentLat, currentLng);
@@ -79,17 +87,17 @@
         var mapCanvas = document.getElementById("map-canvas");
 
         var mapOptions = {
-          zoom: 17,
+          zoom: 18,
           center: currentLoc,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
         }
         var map = new google.maps.Map(mapCanvas, mapOptions);
 
         var circleOptions = {
-          strokeColor: '#22DD22',
-          strokeOpacity: 0.8,
+          strokeColor: '#222222',
+          strokeOpacity: 0.6,
           strokeWeight: 2,
-          fillColor: '#22DD22',
+          fillColor: '#222222',
           fillOpacity: 0.35,
           map: map,
           center: currentLoc,
@@ -99,14 +107,33 @@
         };
         var circle = new google.maps.Circle(circleOptions);
 
+        updateShapeColor(currentLoc, circle);
+
         google.maps.event.addListener(circle, 'center_changed', function() {
           var center = circle.getCenter();
           updateLatLng(center.lat(), center.lng());
+
+          updateShapeColor(currentLoc, circle);
         });
 
         google.maps.event.addListener(circle, 'radius_changed', function() {
           updateRadius(circle.getRadius());
+          updateShapeColor(currentLoc, circle);
         });
+      }
+
+      function updateShapeColor(latLng, shape) {
+        if (shape.getBounds().contains(latLng)) {
+          shape.setOptions({
+            strokeColor: '#22DD22',
+            fillColor: '#22DD22',
+          });
+        } else {
+          shape.setOptions({
+            strokeColor: '#DD2222',
+            fillColor: '#DD2222',
+          });
+        }
       }
 
       function updateLatLng(lat, lng) {
@@ -125,16 +152,16 @@
       function showError(error) {
         switch(error.code) {
           case error.PERMISSION_DENIED:
-            locText.innerHTML = "User denied the request for Geolocation."
+            mapCanvas.innerHTML = "User denied the request for Geolocation."
             break;
           case error.POSITION_UNAVAILABLE:
-            locText.innerHTML = "Location information is unavailable."
+            mapCanvas.innerHTML = "Location information is unavailable."
             break;
           case error.TIMEOUT:
-            locText.innerHTML = "The request to get user location timed out."
+            mapCanvas.innerHTML = "The request to get user location timed out."
             break;
           case error.UNKNOWN_ERROR:
-            locText.innerHTML = "An unknown error occurred."
+            mapCanvas.innerHTML = "An unknown error occurred."
             break;
         }
       }

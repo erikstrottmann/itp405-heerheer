@@ -18,9 +18,12 @@ module.exports = {
       // date and time
       start: req.param('start'),
       end: req.param('end'),
+
+      creator: req.session.me,
     };
 
     sails.log.info(input);
+    sails.log.info(req.session.me);
 
     Event.create(input).exec(function (err, event) {
       if (err) {
@@ -28,9 +31,9 @@ module.exports = {
         return res.negotiate(err);
       }
 
-      if (req.wantsJSON()) {
-        return res.ok('Event creation successful!');
-      }
+      // if (req.wantsJSON()) {
+      //   return res.ok('Event creation successful!');
+      // }
 
       return res.redirect('/events');
     });
@@ -42,7 +45,19 @@ module.exports = {
         req.flash('error', { errors: err });
         return res.view('event/list');
       }
-      return res.view('event/list', { events: events, info: "hey" });
+      return res.view('event/list', { events: events });
     });
   },
+
+  details: function(req, res) {
+    if (!req.param('id')) { return res.view('events/list'); }
+
+    Event.findOne(req.param('id'))
+    .populate('creator')
+    .populate('attendees')
+    .exec(function(err, event) {
+      if (err) { return res.view('event/list'); }
+      return res.view('event/details', { event: event });
+    });
+  }
 };

@@ -74,12 +74,10 @@ module.exports.connections = {
   *                                                                          *
   *                                                                          *
   ***************************************************************************/
-  somePostgresqlServer: {
+  herokuPostgresqlServer: {
     adapter: 'sails-postgresql',
-    host: 'YOUR_POSTGRES_SERVER_HOSTNAME_OR_IP_ADDRESS',
-    user: 'YOUR_POSTGRES_USER',
-    password: 'YOUR_POSTGRES_PASSWORD',
-    database: 'YOUR_POSTGRES_DB'
+    url: 'postgres://qyhohsmkbshqyo:a1tm156NbFJcfqf3m7I1Ac08uV@ec2-23-23-188-252.compute-1.amazonaws.com:5432/d73b2400qgsp5j',
+    ssl: true,
   }
 
 

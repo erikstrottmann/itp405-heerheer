@@ -21,6 +21,15 @@ module.exports = {
     // date and time
     start: 'datetime',
     end: 'datetime',
+
+    // users
+    creator: {
+      model: 'user',
+    },
+    attendees: {
+      collection: 'user',
+      via: 'eventsAttended',
+    },
   },
 
 };

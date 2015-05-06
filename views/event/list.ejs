@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Create an event</title>
+    <title>all events</title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,17 +12,18 @@
     <!--STYLES END-->
   </head>
 
-  <body onload="getLocation()">
+  <body>
+  <div class="container">
+  <div class="row">
+  <div class="col-md-8 col-md-offset-2">
 
-    <h1>List of events</h1>
+    <h1>all events</h1>
 
     <% var errors = req.flash('errors');
        if (errors) {
         _.each(errors, function (error) { %>
           <p><%= error %></p>
     <% })} %>
-
-    <p><%= info %></p>
 
     <table class="table">
       <tr>
@@ -35,9 +36,9 @@
       </tr>
       <% _.each(events, function (event) { %>
       <tr>
-        <td><%= event.name %></td>
-        <td><%= event.lat %></td>
-        <td><%= event.lng %></td>
+        <td><a href="events/<%= event.id %>"><%= event.name %></a></td>
+        <td><%= event.latitude %></td>
+        <td><%= event.longitude %></td>
         <td><%= event.radius %></td>
         <td><%= event.start %></td>
         <td><%= event.end %></td>
@@ -45,5 +46,8 @@
       <% }) %>
     </table>
 
+  </div>
+  </div>
+  </div>
   </body>
 </html>

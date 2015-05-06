@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= event.name %></title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/importer.css">
+    <!--STYLES END-->
+  </head>
+
+  <body onload="getLocation()">
+  <div class="container">
+  <div class="row">
+  <div class="col-md-8 col-md-offset-2">
+
+    <h1><%= event.name %></h1>
+    <h2>event details</h2>
+
+    <% var errors = req.flash('errors');
+       if (errors) {
+        _.each(errors, function(error) { %>
+          <p><%= error %></p>
+    <% })} %>
+
+    <!-- event details -->
+      <!-- google map -->
+    <div id="map-canvas" style="height:200px; width:200px;">(loading map)</div><br>
+
+    <p><strong>start</strong> <%= event.start %></p>
+    <p><strong>end</strong> <%= event.end %></p>
+
+    <h2>attendees</h2>
+
+    <% if (event.attendees.length < 1) { %>
+    <p>No one's checked into this event yet!</p>
+    <% } %>
+
+    <ul>
+      <% _.each(event.attendees, function(attendee) { %>
+      <li><a href="users/<%= attendee.id %>"><%= attendee.username %></a></li>
+      <% }) %>
+    </ul>
+  </div>
+  </div>
+  </div>
+
+    <!-- Google Maps scripts -->
+
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showLocation, showError);
+        } else {
+          var errorText = document.getElementById("error-text");
+          errorText.innerHTML = "Geolocation is not supported by this browser.";
+        }
+      }
+
+      function showMap(color) {
+        var eventLat = <%= event.latitude %>;
+        var eventLng = <%= event.longitude %>;
+        var eventLoc = new google.maps.LatLng(eventLat, eventLng);
+
+        var eventRadius = <%= event.radius %>;
+
+        var mapCanvas = document.getElementById("map-canvas");
+
+        var mapOptions = {
+          zoom: 17,
+          center: eventLoc,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        }
+        var map = new google.maps.Map(mapCanvas, mapOptions);
+
+        var circleOptions = {
+          strokeColor: color,
+          strokeOpacity: 0.6,
+          strokeWeight: 2,
+          fillColor: color,
+          fillOpacity: 0.35,
+          map: map,
+          center: eventLoc,
+          radius: eventRadius,
+        };
+        var circle = new google.maps.Circle(circleOptions);
+
+        google.maps.event.addListener(circle, 'center_changed', function() {
+          var center = circle.getCenter();
+          updateLatLng(center.lat(), center.lng());
+        });
+
+        google.maps.event.addListener(circle, 'radius_changed', function() {
+          updateRadius(circle.getRadius());
+        });
+      }
+
+      function showLocation(position) {
+        var currentLat = position.coords.latitude;
+        var currentLng = position.coords.longitude;
+        var currentLoc = new google.maps.LatLng(currentLat, currentLng);
+
+        var eventLoc = new google.maps.LatLng(<%= event.latitude %>, <%= event.longitude %>);
+        var eventRadius = <%= event.radius %>;
+
+        var eventCircle = new google.maps.Circle({
+          center: eventLoc,
+          radius: eventRadius,
+        });
+
+        var mapCanvas = document.getElementById("map-canvas");
+
+        if (eventCircle.getBounds().contains(eventLoc)) {
+          showMap('#22DD22');
+        } else {
+          showMap('#DD22DD');
+        }
+      }
+
+      function showError(error) {
+        // switch(error.code) {
+        //   case error.PERMISSION_DENIED:
+        //     locText.innerHTML = "User denied the request for Geolocation."
+        //     break;
+        //   case error.POSITION_UNAVAILABLE:
+        //     locText.innerHTML = "Location information is unavailable."
+        //     break;
+        //   case error.TIMEOUT:
+        //     locText.innerHTML = "The request to get user location timed out."
+        //     break;
+        //   case error.UNKNOWN_ERROR:
+        //     locText.innerHTML = "An unknown error occurred."
+        //     break;
+        // }
+
+        showMap('#222222');
+      }
+    </script>
+
+  </body>
+</html>
