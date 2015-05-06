@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HeerHeer</title>
+    <title>heerheer</title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/importer.css">
@@ -12,14 +14,23 @@
   </head>
 
   <body>
+  <div class="container">
+  <div class="row">
+  <div class="col-md-8 col-md-offset-2">
 
-    <h1>Basic Login With Sails</h1>
+    <h1>heerheer</h1>
+
+    <h2 class="h4">heerheer makes attendance easy. no more paper sign-in sheets!</h2>
 
     <% if (req.session.me) { %>
-    <a href="/logout">Logout</a>
+    <p>you can check out the <a href="/events">event list</a> or <a href="/events/create">create your own</a></p>
+    (or you can <a href="/logout">log out</a>)
     <% } else { %>
-    <a href="/login">Login</a> | <a href="/signup">Signup</a>
+    <a href="/login">log in</a> or <a href="/signup">sign up</a> to get started
     <% } %>
 
+  </div>
+  </div>
+  </div>
   </body>
 </html>

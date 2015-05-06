@@ -16,7 +16,7 @@ module.exports = {
     return res.login({
       username: req.param('username'),
       password: req.param('password'),
-      successRedirect: '/welcome',
+      successRedirect: '/',
       invalidRedirect: '/login'
     });
   },
@@ -69,8 +69,8 @@ module.exports = {
         return res.ok('Signup successful!');
       }
 
-      // Otherwise if this is an HTML-wanting browser, redirect to /welcome.
-      return res.redirect('/welcome');
+      // Otherwise if this is an HTML-wanting browser, redirect to /.
+      return res.redirect('/');
     });
   }
 };

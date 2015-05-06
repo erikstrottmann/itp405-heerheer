@@ -20,5 +20,5 @@ module.exports.models = {
 
   connection: 'herokuPostgresqlServer',
 
-  migrate: 'alter',
+  migrate: 'drop',
 };

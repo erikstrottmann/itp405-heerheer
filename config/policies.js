@@ -25,6 +25,10 @@ module.exports.policies = {
     '*': 'isAuthenticated',
     login: true,
     signup: true
+  },
+
+  EventController: {
+    '*': 'isAuthenticated',
   }
 
 };

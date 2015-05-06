@@ -40,7 +40,10 @@ module.exports = {
   },
 
   list: function(req, res) {
-    Event.find().exec(function(err, events) {
+    Event.find()
+    .populate('creator')
+    .populate('attendees')
+    .exec(function(err, events) {
       if (err) {
         req.flash('error', { errors: err });
         return res.view('event/list');
@@ -50,14 +53,38 @@ module.exports = {
   },
 
   details: function(req, res) {
-    if (!req.param('id')) { return res.view('events/list'); }
+    if (!req.param('id')) { return res.redirect('events/list'); }
 
     Event.findOne(req.param('id'))
     .populate('creator')
     .populate('attendees')
     .exec(function(err, event) {
-      if (err) { return res.view('event/list'); }
+      if (err) { return res.redirect('events/list'); }
       return res.view('event/details', { event: event });
     });
-  }
+  },
+
+  checkIn: function(req, res) {
+    if (!req.param('id')) { return res.redirect('events/list'); }
+
+    var eventId = req.param('id');
+
+    Event.findOne(eventId)
+    .populate('attendees')
+    .exec(function(err, event) {
+      if (err) { return res.redirect('events/' + eventId); }
+
+      event.attendees.add(req.session.me);
+
+      event.save(function(err) {
+        if (err) {
+          req.flash('error', "couldn't check in :/ have you already checked into this event?" );
+          return res.redirect('events/' + eventId);
+        } else {
+          req.flash('success', "checked in!");
+        }
+        return res.redirect('events/' + eventId);
+      });
+    });
+  },
 };

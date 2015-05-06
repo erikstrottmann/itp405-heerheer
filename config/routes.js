@@ -9,8 +9,6 @@ module.exports.routes = {
   'post /signup': 'UserController.signup',
   '/logout': 'UserController.logout',
 
-  'get /welcome': { view: 'user/welcome' },
-
   // User details
   // 'get /users/:id': 'UserController.details',
 
@@ -21,5 +19,5 @@ module.exports.routes = {
   'get /events/create': { view: 'event/create' },
 
   'get /events/:id': 'EventController.details',
-  // 'post /events/:id/attendees': 'EventController.checkIn',
+  'post /events/:id/attendees': 'EventController.checkIn',
 };

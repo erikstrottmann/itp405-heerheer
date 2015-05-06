@@ -10,6 +10,14 @@
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/importer.css">
     <!--STYLES END-->
+    <style type="text/css">
+      .error {
+        color: #DD2222;
+      }
+      .success {
+        color: #22DD22;
+      }
+    </style>
   </head>
 
   <body onload="getLocation()">
@@ -17,19 +25,20 @@
   <div class="row">
   <div class="col-md-8 col-md-offset-2">
 
-    <h1><%= event.name %></h1>
+    <h1><%= event.name %> | heerheer</h1>
+
+    <% var error = req.flash('error'); if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <% var success = req.flash('success'); if (success) { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+
     <h2>event details</h2>
-
-    <% var errors = req.flash('errors');
-       if (errors) {
-        _.each(errors, function(error) { %>
-          <p><%= error %></p>
-    <% })} %>
-
-    <!-- event details -->
-      <!-- google map -->
     <div id="map-canvas" style="height:400px; width:400px;">(loading map)</div><br>
 
+    <p><strong>creator</strong> <%= event.creator.username %></p>
     <p><strong>start</strong> <%= event.start %></p>
     <p><strong>end</strong> <%= event.end %></p>
 
@@ -38,6 +47,7 @@
     <div>
       <form action="/events/<%= event.id %>/attendees" method="post">
         <div class="form-group">
+          <p id="checkin-loading">hold tight, we're checking your location</p>
           <p id="rightplace-righttime" hidden>you're at the right place at the right time.</p>
           <p id="wrongplace-righttime" hidden>the time is right, but you feel... distant</p>
           <p id="rightplace-wrongtime" hidden>you've come to the right place, but... now's not a good time.</p>
@@ -55,7 +65,7 @@
 
     <ul>
       <% _.each(event.attendees, function(attendee) { %>
-      <li><a href="users/<%= attendee.id %>"><%= attendee.username %></a></li>
+      <li><!-- <a href="users/<%= attendee.id %>"> --><%= attendee.username %><!-- </a> --></li>
       <% }) %>
     </ul>
   </div>
@@ -170,21 +180,24 @@
 
         var rightTime = (eventStart < now && now < eventEnd);
 
+        var load = document.getElementById("checkin-loading");
         var rprt = document.getElementById("rightplace-righttime");
         var wprt = document.getElementById("wrongplace-righttime");
         var rpwt = document.getElementById("rightplace-wrongtime");
         var wpwt = document.getElementById("wrongplace-wrongtime");
         var but = document.getElementById("checkin-button");
 
+        load.setAttribute('hidden', true);
         rprt.setAttribute('hidden', true);
         wprt.setAttribute('hidden', true);
         rpwt.setAttribute('hidden', true);
         wpwt.setAttribute('hidden', true);
-        but.enabled = false;
+        but.setAttribute('disabled', true);
+        but.removeAttribute('disabled');
 
         if (rightPlace && rightTime) {
           rprt.removeAttribute('hidden');
-          but.enabled = true;
+          // but.removeAttribute('disabled');
         } else if (rightTime) {
           wprt.removeAttribute('hidden');
         } else if (rightPlace) {
