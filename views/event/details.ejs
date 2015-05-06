@@ -145,11 +145,11 @@
 
         var mapCanvas = document.getElementById("map-canvas");
 
-        if (eventCircle.getBounds().contains(eventLoc)) {
+        if (eventCircle.getBounds().contains(currentLoc)) {
           showMap('#22DD22', currentLoc);
           showCheckIn(true);
         } else {
-          showMap('#DD22DD', currentLoc);
+          showMap('#DD2222', currentLoc);
           showCheckIn(false);
         }
       }
@@ -193,11 +193,10 @@
         rpwt.setAttribute('hidden', true);
         wpwt.setAttribute('hidden', true);
         but.setAttribute('disabled', true);
-        but.removeAttribute('disabled');
 
         if (rightPlace && rightTime) {
           rprt.removeAttribute('hidden');
-          // but.removeAttribute('disabled');
+          but.removeAttribute('disabled');
         } else if (rightTime) {
           wprt.removeAttribute('hidden');
         } else if (rightPlace) {
